@@ -10,13 +10,14 @@ namespace Voxalis.Tasks
     public static class TaskBuilder
     {
         /// <summary>
-        /// Create this instance.
+        /// Create the specified context.
         /// </summary>
         /// <returns>The create.</returns>
+        /// <param name="context">Context.</param>
         /// <typeparam name="TContext">The 1st type parameter.</typeparam>
-        public static TaskBuilder<TContext> Create<TContext>()
+        public static TaskBuilder<TContext> Create<TContext>(TContext context)
         {
-            return new TaskBuilder<TContext>();
+            return new TaskBuilder<TContext>(context);
         }
     }
 
@@ -25,6 +26,11 @@ namespace Voxalis.Tasks
     /// </summary>
     public sealed class TaskBuilder<TContext>
     {
+        /// <summary>
+        /// The context.
+        /// </summary>
+        public readonly TContext Context;
+
         /// <summary>
         /// The stack.
         /// </summary>
@@ -35,6 +41,15 @@ namespace Voxalis.Tasks
         /// </summary>
         /// <value>The current task.</value>
         private ITask<TContext> CurrentTask { get; set; }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="T:Voxalis.Tasks.TaskBuilder`1"/> class.
+        /// </summary>
+        /// <param name="context">Context.</param>
+        public TaskBuilder(TContext context)
+        {
+            Context = context;
+        }
 
         /// <summary>
         /// Push the specified task.
@@ -119,6 +134,14 @@ namespace Voxalis.Tasks
             }
 
             return CurrentTask;
+        }
+
+        /// <summary>
+        /// Tick this instance.
+        /// </summary>
+        public void Tick()
+        {
+            CurrentTask?.Tick(Context);
         }
     }
 }
